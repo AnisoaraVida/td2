@@ -17,6 +17,7 @@ public interface Somme<T> {
         StringBuilder sb = new StringBuilder();
         sb.append(s1);
         sb.append(s2);
+        sb.toString();
         return sb;
     };
 
