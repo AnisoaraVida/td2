@@ -18,7 +18,7 @@ public interface Somme<T> {
         sb.append(s1);
         sb.append(s2);
         sb.toString();
-        return sb;
+        return 0;
     };
 
 }
