@@ -80,7 +80,11 @@ public class App {
     public static final Predicate<Etudiant> defaillant = e -> {
         Set<Matiere> toutesLesMatieresDeLetudiant =
                 App.toutesLesMatieresAnnee(e.annee());
-        
+        for(Matiere m : toutesLesMatieresDeLetudiant){
+            if(! e.notes().containsKey(m)){
+                return false;
+            }
+        }
         return true;
     };
 
@@ -101,8 +105,8 @@ public class App {
         e3.noter(m2, 5.0);
         e3.noter(m3, 14.0);
         a1.etudiants();
-        Predicate<Etudiant> aDEF = etudiant -> etudiant.notes().keySet()>10;
-        afficheSi("ETDUDIANT DEF", aDEF, a1);
+        //Predicate<Etudiant> aDEF = etudiant -> etudiant.notes().keySet()>10;
+        afficheSi("ETDUDIANT DEF", defaillant, a1);
     }
 
     public static void main(String[] args) {
