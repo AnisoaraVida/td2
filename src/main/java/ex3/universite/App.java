@@ -10,6 +10,8 @@ import static java.util.Set.*;
 import static java.util.Set.of;
 
 public class App {
+
+
     public static void afficheSi(String entete, Predicate<Etudiant> condition, Annee annee){
         StringBuilder rtr = new StringBuilder();
         rtr.append(String.format("** %s\n",entete));
@@ -54,17 +56,6 @@ public class App {
          * */
 
     }
-    /*
-    public static final Set<Double> toutesLesNotesAnnee(Annee a) {
-        Set<Double> rtr = new HashSet<Double>(){};
-        for (Matiere m : a.) {
-            for (Matiere m : ue.ects().keySet()) {
-               rtr.add();
-            }
-        }
-        return rtr;
-    }
-*/
 
     public static final Predicate<Etudiant> defaillant = e -> {
         Set<Matiere> toutesLesMatieresDeLetudiant =
@@ -85,6 +76,53 @@ public class App {
         }
         return false;
     };
+
+    private static Moyenne moyenne = new Moyenne(){
+        @Override
+        public Double moyenne(Etudiant e) {
+            Double rtr= null;
+            double notes= 0;
+            double coefficients= 0;
+            if(!defaillant.test(e)){
+                for(UE ue: e.annee().ues()){
+                    for(Entry<Matiere, Integer> ects : ue.ects().entrySet()) {
+                        Matiere mat = ects.getKey();
+                        Integer etcs = ects.getValue();
+                        notes += e.notes().get(mat) * etcs;
+                        coefficients += etcs;
+                    }
+                }
+                if(coefficients != 0) {
+                    rtr = notes / coefficients;
+                }
+            }
+            return rtr;
+        }
+    };
+
+
+
+    public static final Predicate<Etudiant> naPasLaMoyennev1 =  e -> {
+        if(moyenne.moyenne(e) < 10.00){
+            return true;
+        }
+        return false;
+    };
+
+    public static final Predicate<Etudiant> naPasLaMoyennev2 = e -> {
+        boolean rtr = false;
+        if(defaillant.test(e)){
+            rtr = true;
+        }
+        else {
+            rtr = naPasLaMoyennev1.test(e);
+        }
+        return rtr;
+    };
+
+    public static final Predicate<Etudiant> session2v1 = e -> noteEliminatoire.or(defaillant).test(e);
+
+
 
     public static void question3_1() {
         Matiere m1 = new Matiere("MAT1");
@@ -108,6 +146,10 @@ public class App {
         //afficheSi2("TOUS LES ETUDIANTS", tousLesEtudiants, a1);
         afficheSi("ETDUDIANT DEF", defaillant, a1);
         afficheSi("ETUDIANTS AVEC NOTE ELIMINATOIRE", noteEliminatoire, a1);
+        System.out.println(moyenne.moyenne(e1));
+        //afficheSi("ETUDIANTS SOUS LA MOYENNE (v1)", naPasLaMoyennev1, a1);
+        afficheSi("ETUDIANTS SOUS LA MOYENNE (v2)", naPasLaMoyennev2, a1);
+        afficheSi("ETUDIANTS EN SESSION 2", session2v1, a1);
     }
 
     public static void main(String[] args) {
