@@ -110,6 +110,7 @@ public class App {
     }
 
     public static void main(String[] args) {
+        question3_1();
         question3_2();
     }
 }
