@@ -152,6 +152,43 @@ public class App {
         }
     };
 
+    private static Moyenne moyenneIndicative = new Moyenne(){
+        @Override
+        public Double moyenne(Etudiant e) {
+            Double rtr= null;
+            double notes= 0;
+            double coefficients= 0;
+                for(UE ue: e.annee().ues()){
+                    for(Entry<Matiere, Integer> ects : ue.ects().entrySet()) {
+                        Matiere mat = ects.getKey();
+                        Integer etcs = ects.getValue();
+                        if(e.notes().keySet().contains(mat)) {
+                            notes += e.notes().get(mat) * etcs;
+                        }
+                        coefficients += etcs;
+                    }
+                }
+                if(coefficients != 0) {
+                    rtr = notes / coefficients;
+                }
+            return rtr;
+            }
+    };
+
+    public static final Predicate<Etudiant> naPasLaMoyenneIndicative = e -> {
+        if(moyenneIndicative.moyenne(e) < 10) {
+            return true;
+        }
+        return false;
+    };
+
+    private static Affichage affiche3 = new Affichage(){
+        @Override
+        public String affichage(Etudiant e) {
+            Double moyenne = moyenneIndicative.moyenne(e);
+            return String.format("%s %s : %.2f\n", e.prenom(), e.nom(), moyenne);
+        }
+    };
 
     public static void question3_1() {
         Matiere m1 = new Matiere("MAT1");
@@ -175,12 +212,15 @@ public class App {
         //afficheSi2("TOUS LES ETUDIANTS", tousLesEtudiants, a1);
         afficheSi("ETDUDIANT DEF", defaillant, a1);
         afficheSi("ETUDIANTS AVEC NOTE ELIMINATOIRE", noteEliminatoire, a1);
-        System.out.println(moyenne.moyenne(e1));
+        System.out.println(moyenne.moyenne(e2));
         //afficheSi("ETUDIANTS SOUS LA MOYENNE (v1)", naPasLaMoyennev1, a1);
         afficheSi("ETUDIANTS SOUS LA MOYENNE (v2)", naPasLaMoyennev2, a1);
         afficheSi("ETUDIANTS EN SESSION 2", session2v1, a1);
-        afficheSIV2("** TOUS LES ETUDIANTS (v2)", tousLesEtudiants, a1, affiche1);
-        afficheSIV2("** TOUS LES ETUDIANTS (v3)", tousLesEtudiants, a1, affiche2);
+        afficheSIV2("** TOUS LES ETUDIANTS (v1)", tousLesEtudiants, a1, affiche1);
+        afficheSIV2("** TOUS LES ETUDIANTS (v2)", tousLesEtudiants, a1, affiche2);
+        afficheSIV2("** TOUS LES ETUDIANTS (v2)", tousLesEtudiants, a1, affiche3);
+        System.out.println(moyenneIndicative.moyenne(e2));
+        afficheSIV2("** TOUS LES ETUDIANTS SOUS LA MOYENNE INDICATIVE", naPasLaMoyenneIndicative, a1, affiche3);
     }
 
     public static void main(String[] args) {
