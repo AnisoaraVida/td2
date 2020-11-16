@@ -82,10 +82,10 @@ public class App {
                 App.toutesLesMatieresAnnee(e.annee());
         for(Matiere m : toutesLesMatieresDeLetudiant){
             if(! e.notes().containsKey(m)){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     };
 
     public static void question3_2() {
