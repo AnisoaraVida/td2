@@ -37,6 +37,20 @@ public class App {
 
     }
 
+    public static void afficheSIV2(String entete, Predicate<Etudiant> condition, Annee annee, Affichage app) {
+        StringBuilder rtr = new StringBuilder();
+        rtr.append(String.format("** %s\n",entete));
+
+        annee.etudiants().forEach( e ->{
+            if(condition.test(e)){
+                rtr.append(app.affichage(e));
+            }
+        });
+        rtr.toString();
+        System.out.println(rtr);
+    }
+
+
 
     public static final Set<Matiere> toutesLesMatieresAnnee(Annee a){
         Set<Matiere> rtr = new HashSet<>();
@@ -123,6 +137,21 @@ public class App {
     public static final Predicate<Etudiant> session2v1 = e -> noteEliminatoire.or(defaillant).test(e);
 
 
+    private static Affichage affiche1 = new Affichage(){
+        @Override
+        public String affichage(Etudiant x) {
+            return x.toString();
+        }
+    };
+
+    private static Affichage affiche2 = new Affichage(){
+        @Override
+        public String affichage(Etudiant x) {
+            Double moyenne1 = moyenne.moyenne(x);
+            return String.format("%s %s : %s \n", x.prenom(), x.nom(), moyenne1 != null ? moyenne1.toString() : "défaillant");
+        }
+    };
+
 
     public static void question3_1() {
         Matiere m1 = new Matiere("MAT1");
@@ -150,6 +179,8 @@ public class App {
         //afficheSi("ETUDIANTS SOUS LA MOYENNE (v1)", naPasLaMoyennev1, a1);
         afficheSi("ETUDIANTS SOUS LA MOYENNE (v2)", naPasLaMoyennev2, a1);
         afficheSi("ETUDIANTS EN SESSION 2", session2v1, a1);
+        afficheSIV2("** TOUS LES ETUDIANTS (v2)", tousLesEtudiants, a1, affiche1);
+        afficheSIV2("** TOUS LES ETUDIANTS (v3)", tousLesEtudiants, a1, affiche2);
     }
 
     public static void main(String[] args) {
